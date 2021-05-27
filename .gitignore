@@ -1,0 +1,12 @@
+/venv/
+/build/
+/dist/
+/tests/
+/resources/*
+/tracra_resources/*
+*.pyo
+/.idea/
+tracra*.zip
+/target/
+*.pyc
+/src/main/python/tests
