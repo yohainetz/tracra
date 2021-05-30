@@ -1,9 +1,15 @@
 import webbrowser
 from oauth.oauth2 import GeneratePermissionUrl, GenerateOAuth2String, AuthorizeTokens
+from utils_resource import ResourceManager
 
-GOOGLE_CLIENT_ID = "711216531075-m4v8b6u5tjp0v8vvmakmbh5548e2el5q.apps.googleusercontent.com"
-GOOGLE_CLIENT_SECRET = "w8VAI0Xswlpch1byUSdbr5Xj"
-
+google_secret_filepath = ResourceManager().get_res_path(["tracra_resources","google_client.txt"])
+try:
+    google_secret_file = open(google_secret_filepath, "r", encoding="utf-8")
+    GOOGLE_CLIENT_ID = google_secret_file.readline().strip() # first line
+    GOOGLE_CLIENT_SECRET = google_secret_file.readline().strip() # second line
+except Exception as e:
+    print("Error when trying to read google secret")
+    print(e)
 
 
 def openOauthWebsite():

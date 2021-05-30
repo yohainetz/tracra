@@ -20,6 +20,13 @@ On Windows you my need to install `pip install windows-curses`.
 
 To install package `editdistance` on OSX Intel (not M1) set build flag `export ARCHFLAGS="-arch x86_64"` before running `pip install`.
 
+**GMAIL Oauth**
+For gmail oauth to work, you need to register an app on https://console.developers.google.com/apis and get a CLIENT_ID and a CLIENT_SECRET. Put them in a file `google_client.txt` in directory `tracra_resources`. Its content should look like this:
+
+~~~
+713216532075-m4v8b6u5tjf0v8vvmakmbh5548g2el1q.apps.googleusercontent.com
+w8VAI0Xswlpzh1byKSdbr5Xj
+~~~
 
 ## build self contained binary
 

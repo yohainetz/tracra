@@ -105,7 +105,7 @@ class TracraMain(QWidget):
 
     def google_form(self):
         self.forward_button.clicked.disconnect()
-        ret = QMessageBox.question(self, "GMAIL","Google erfordert eine explizite Erlaubnis um auf Emails zuzugreifen. Du wirst gleich auf google.com weitergeleitet um dem Zugriff zuzustimmen.", QMessageBox.OK)
+        ret = QMessageBox.question(self, "GMAIL","Google erfordert eine explizite Erlaubnis um auf Emails zuzugreifen. Du wirst gleich auf google.com weitergeleitet um dem Zugriff zuzustimmen.", QMessageBox.Ok)
 
         #prompt(confirmquestion)
         openOauthWebsite()

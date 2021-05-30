@@ -13,7 +13,7 @@ import csv
 MSG_FILES_PATH = "tests/aol_messages/"
 XLSX_TEST_FILENAME = "aol_test"
 TEST_EMAIL = "jojoschaeffer@aol.de"
-MAIL_LIMIT = 80
+MAIL_LIMIT = 8
 
 
 class MailboxTest(unittest.TestCase):
@@ -23,7 +23,7 @@ class MailboxTest(unittest.TestCase):
         tracra_export.writeMails(self.mailbox.analyzed_mails, XLSX_TEST_FILENAME, True)
 
         tracking_sender_data = self.mailbox.tracking_senders
-        tracra_export.write_plaintext_tracking(list(map(list, tracking_sender_data.items())), "tracking_senders")
+        tracra_export.write_plaintext_tracking(list(map(list, tracking_sender_data.items())), XLSX_TEST_FILENAME+"tracking_senders")
 
     def mail_test(self):
         pass
