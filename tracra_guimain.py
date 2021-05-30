@@ -171,10 +171,10 @@ class TracraMain(QWidget):
     def email_alias_form(self):
 
         self.email_alias_edit = QPlainTextEdit()
-        self.form_layout.addRow("E-Mail Aliasse",self.email_alias_edit)
+        self.form_layout.addRow("E-Mail Aliasse\n(Ein Alias pro Zeile)",self.email_alias_edit)
 
         self.name_alias_edit = QPlainTextEdit()
-        self.form_layout.addRow("Zweitnamen", self.name_alias_edit)
+        self.form_layout.addRow("Namensvarianten\n(Eine pro Zeile)", self.name_alias_edit)
 
         self.forward_button.clicked.disconnect()
         self.forward_button.clicked.connect(self.process_alias_form)

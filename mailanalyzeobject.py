@@ -84,7 +84,7 @@ class MailAnalyzeObject:
         self.cache["FLAG_SEEN"] = "SEEN" in self.flags
         self.cache["FLAG_FLAGGED"] = "FLAGGED" in self.flags
         self.cache["KEYWORDS"] = ",".join(self.keywords())
-        self.cache["PERSONAL_SALUTATION"] = self.containsPersonalSalutation()
+        self.cache["PERSONAL_SALUTATION"] = ",".join(self.containsPersonalSalutation())
         self.cache["SIGNATURE_BLOCK"] = ",".join(self.signature_block())
         self.cache["RETURN_RECEIPT_HEADER"] = self.readReceiptHeader()
         self.cache["#MTAS"] = len(self.mtas)
@@ -214,16 +214,22 @@ class MailAnalyzeObject:
         text = self.text
         forename = self.mailbox.forename
         lastname = self.mailbox.lastname
+        results = []
         if forename + " " + lastname in text:
-            return "FULL"
+            results.append("FULL")
         elif lastname + " " + forename in text:
-            return "FULL"
-        elif forename in text:
-            return "FORENAME"
-        elif lastname in text:
-            return "LASTNAME"
-        else:
-            return None
+            results.append("FULL")
+        elif " "+forename in text:
+            results.append("FORENAME")
+        elif " "+lastname in text:
+            results.append("LASTNAME")
+
+        for name in self.mailbox.name_aliases:
+            if " "+name in text:
+                results.append("ALIAS")
+                break
+
+        return results
 
     def html_plain(self):
         if self.html is not None:
