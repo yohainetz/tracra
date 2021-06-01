@@ -1,6 +1,6 @@
 from __future__ import print_function, unicode_literals
 
-import datetime
+from datetime import datetime
 
 from PyQt5.QtCore import QThread
 from PyQt5.QtGui import QTextDocument, QTextBlock
