@@ -1,5 +1,7 @@
 from __future__ import print_function, unicode_literals
 
+import datetime
+
 from PyQt5.QtCore import QThread
 from PyQt5.QtGui import QTextDocument, QTextBlock
 
@@ -79,17 +81,19 @@ class TracraMain(QWidget):
         self.whois_worker.progress_reporter._pbar_val_signal.connect(self.pbar_signal_val)
         self.whois_worker.progress_reporter._pbar_val_update_signal.connect(self.pbar_signal_update)
         self.whois_worker.progress_reporter._pbar_init_signal.connect(self.pbar_signal_init)
-        #self.whois_worker.progress_reporter._pbar_finished_signal.connect(self.write_to_files)
+
         self.whois_worker.finished.connect(self.whois_worker.progress_reporter.quit)
         self.whois_worker.finished.connect(self.whois_worker.progress_reporter.deleteLater)
         self.whois_worker.start()
         self.whois_worker.finished.connect(self.write_to_files)
 
     def write_to_files(self):
+        now = datetime.now()
+        datestr = now.strftime("%m-%d_%H-%M")
         self.pbar_label.setText("Schreibe Dateien")
-        tracra_export.writeMails(self.mailbox.analyzed_mails, "output", False)
+        tracra_export.writeMails(self.mailbox.analyzed_mails, "output_"+datestr, False)
         tracking_sender_data = self.mailbox.tracking_senders
-        tracra_export.write_plaintext_tracking(list(map(list, tracking_sender_data.items())), "tracking_senders")
+        tracra_export.write_plaintext_tracking(list(map(list, tracking_sender_data.items())), "tracking_senders_"+datestr)
         self.pbar_label.setText("Dateien geschrieben")
         self.prepare_exit()
 
