@@ -151,9 +151,11 @@ class ResourceAnalyzeObject:
     def isTracker(self):
         if self.url.startswith("mailto:"):
             return False
-        if self.blockedBy() != []:
-            return True
-        if self.html and self.isTrackingPixel():
+        blocked_signals = ["Easylist", "EasylistGermany", "disconnect.me-FingerprintingGeneral", "disconnect.me-FingerprintingInvasive"]
+        for signal in blocked_signals:
+            if signal in self.blockedBy():
+                return True
+        if self.html and self.isTrackingPixel() is True:
             return True
 
     def isTrackingPixel(self):

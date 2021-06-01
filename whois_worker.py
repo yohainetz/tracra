@@ -40,7 +40,6 @@ class WhoisWorker(QThread):
                 worker.append(wProcess)
             for w in worker:
                 w.start()
-            os.system('cls' if os.name == 'nt' else 'clear')
             p0.start()
 
             # for w in worker:

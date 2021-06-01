@@ -87,7 +87,7 @@ class TracraMain(QWidget):
 
     def write_to_files(self):
         self.pbar_label.setText("Schreibe Dateien")
-        tracra_export.writeMails(self.mailbox.analyzed_mails, "output", True)
+        tracra_export.writeMails(self.mailbox.analyzed_mails, "output", False)
         tracking_sender_data = self.mailbox.tracking_senders
         tracra_export.write_plaintext_tracking(list(map(list, tracking_sender_data.items())), "tracking_senders")
         self.pbar_label.setText("Dateien geschrieben")
