@@ -6,6 +6,7 @@ import json
 from tqdm import tqdm
 from utils_resource import ResourceManager
 import logging
+import os
 
 RESOURCE_CONFIG = ["MAIL_ID",
                    "LINK_COUNTER",
@@ -143,7 +144,7 @@ def field_is_not_empty(field):
 def fill_empty_with_na(row):
     return list(map(lambda f: f if field_is_not_empty(f) else "N/A", row))
 
-def writeMails(analyzed_mails_arr, destname, rawdata=False):
+def writeMails(analyzed_mails_arr, destname, folderpath, rawdata=False):
     wb = Workbook()
     dest_filename = destname + '.xlsx'
     raw_dest_filename = "KLARTEXT_TRACKING_" + dest_filename
@@ -197,9 +198,10 @@ def writeMails(analyzed_mails_arr, destname, rawdata=False):
                 logging.debug(str(resource_row))
                 logging.debug(e)
 
-    wb.save(filename=ResourceManager().get_write_path(dest_filename))
+    destpath = os.path.join(folderpath,dest_filename)
+    wb.save(destpath)
 
-def write_plaintext_tracking(data, destname):
+def write_plaintext_tracking(data, destname, folderpath):
     sorted_data = sorted(data, key=lambda d: d[0].split("@")[-1])
 
     wb = Workbook()
@@ -212,4 +214,4 @@ def write_plaintext_tracking(data, destname):
     for row in sorted_data:
         ws_tracking.append(row)
 
-    wb.save(filename=ResourceManager().get_write_path(dest_filename))
+    wb.save(os.path.join(folderpath,dest_filename))

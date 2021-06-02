@@ -1,5 +1,6 @@
 import unittest
 import os
+from pathlib import Path
 
 from imap_tools import MailMessage, MailMessageFlags
 import glob
@@ -20,10 +21,10 @@ class MailboxTest(unittest.TestCase):
 
 
     def test_xlsx_export(self):
-        tracra_export.writeMails(self.mailbox.analyzed_mails, XLSX_TEST_FILENAME, True)
+        tracra_export.writeMails(self.mailbox.analyzed_mails, XLSX_TEST_FILENAME, Path.cwd(),True)
 
         tracking_sender_data = self.mailbox.tracking_senders
-        tracra_export.write_plaintext_tracking(list(map(list, tracking_sender_data.items())), XLSX_TEST_FILENAME+"tracking_senders")
+        tracra_export.write_plaintext_tracking(list(map(list, tracking_sender_data.items())), XLSX_TEST_FILENAME+"tracking_senders",Path.cwd())
 
     def mail_test(self):
         pass

@@ -2,6 +2,7 @@ from __future__ import print_function, unicode_literals
 
 from datetime import datetime
 
+from PyQt5 import QtWidgets
 from PyQt5.QtCore import QThread
 from PyQt5.QtGui import QTextDocument, QTextBlock
 
@@ -91,10 +92,11 @@ class TracraMain(QWidget):
         now = datetime.now()
         datestr = now.strftime("%m-%d_%H-%M")
         self.pbar_label.setText("Schreibe Dateien")
-        tracra_export.writeMails(self.mailbox.analyzed_mails, "output_"+datestr, False)
+        folderpath = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select Folder for Output')
+        tracra_export.writeMails(self.mailbox.analyzed_mails, "output_"+datestr, folderpath,False)
         tracking_sender_data = self.mailbox.tracking_senders
-        tracra_export.write_plaintext_tracking(list(map(list, tracking_sender_data.items())), "tracking_senders_"+datestr)
-        self.pbar_label.setText("Dateien geschrieben")
+        tracra_export.write_plaintext_tracking(list(map(list, tracking_sender_data.items())), "tracking_senders_"+datestr, folderpath)
+        self.pbar_label.setText("Dateien geschrieben nach: " + folderpath)
         self.prepare_exit()
 
     def process_login_form(self):

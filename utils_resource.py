@@ -32,8 +32,3 @@ class ResourceManager:
             #application_path = os.path.join(sys.executable,"..")
         return os.path.join(application_path, *partial_path)
 
-    def get_write_path(self,destname):
-        if platform.system() == "Windows":
-            return os.path.join(Path.cwd(), destname)
-        else:
-            return os.path.join(Path(__file__).parent.parent.parent.parent, destname)
