@@ -95,7 +95,7 @@ class TracraMain(QWidget):
         folderpath = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select Folder for Output')
         tracra_export.writeMails(self.mailbox.analyzed_mails, "output_"+datestr, folderpath,False)
         tracking_sender_data = self.mailbox.tracking_senders
-        tracra_export.write_plaintext_tracking(list(map(list, tracking_sender_data.items())), "tracking_senders_"+datestr, folderpath)
+        tracra_export.write_plaintext_tracking(tracking_sender_data, "likely_tracking_"+datestr, folderpath)
         self.pbar_label.setText("Dateien geschrieben nach: " + folderpath)
         self.prepare_exit()
 
@@ -165,8 +165,8 @@ class TracraMain(QWidget):
 
 
     def prepare_exit(self):
-        self.main_layout.addWidget(QLabel(
-            "Vorgang abgeschlossen. Du findest die Ausgabedateien in dem Ordner, in dem auch dieses Programm liegt."))
+        #self.main_layout.addWidget(QLabel(
+        #    "Vorgang abgeschlossen. Du findest die Ausgabedateien in dem Ordner, in dem auch dieses Programm liegt."))
         self.exit_btn = QPushButton("Beenden.")
         self.exit_btn.clicked.connect(self.exit_form)
         self.main_layout.addWidget(self.exit_btn)

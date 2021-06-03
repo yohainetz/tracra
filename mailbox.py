@@ -31,7 +31,7 @@ class MailboxAnalyzeObject(QThread):
         self.mailcounter = 0
         self.email_aliases = []
         self.link_counter = 0
-        self.tracking_senders = defaultdict(int)
+        self.tracking_senders = defaultdict(lambda: defaultdict(int))
 
     def set_email(self, email):
         self.email = email.lower()
@@ -124,7 +124,7 @@ class MailboxAnalyzeObject(QThread):
 
     def fetchMails(self, password, imap_server):
         print("Retrieving...")
-        LIMIT_PER_FOLDER = 80
+        LIMIT_PER_FOLDER = 75
         try_reverse = True
         mailbox = None
 
@@ -220,8 +220,10 @@ class MailboxAnalyzeObject(QThread):
         for mail in tqdm(self.analyzed_mails, unit=" E-Mails"):
             self._pbar_val_update_signal.emit(1)
             mail.process()
-            if mail.cache["#TRACKING_URLS_IN_MAIL"] > 0:
-                self.tracking_senders[mail.from_] += 1
+            if mail.cache["#TRACKING_CLICK_URLS_IN_MAIL"] > 0:
+                self.tracking_senders[mail.from_]["CLICK"] += 1
+            if mail.cache["#TRACKING_OTHER_URLS_IN_MAIL"] > 0:
+                self.tracking_senders[mail.from_]["OTHER"] += 1
 
     def run(self):
         self.fetchMails(self.password, self.imap_server)

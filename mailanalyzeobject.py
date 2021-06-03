@@ -13,6 +13,7 @@ import re
 from hashed_helper import HashHelper
 import tldextract
 from lxml import etree
+from chardet import detect
 
 from utils_nlp import NLPUtils
 
@@ -32,7 +33,12 @@ class MailAnalyzeObject:
         if self.html:
             self.text = html2text.html2text(self.html)
         else:
-            self.text = msg.text
+            try:
+                encoded_text = msg.text.encode('raw_unicode_escape')
+                encoding = detect(encoded_text)['encoding']
+                self.text = encoded_text.decode(encoding)
+            except Exception as e:
+                self.text = msg.text
         self.headers = msg.headers
         self.mail_id = mail_id
         self.to = msg.to
@@ -71,8 +77,9 @@ class MailAnalyzeObject:
         self.cache["FOLDER"] = self.folder
         self.cache["MAIL_ID"] = self.mail_id
         self.cache["YEAR"] = self.date.year
-        self.cache["#TRACKING_URLS_IN_MAIL"] = len(list(filter(lambda x: x.isTracker(), self.web_resources)))
-        self.cache["#NON_TRACKING_URLS_IN_MAIL"] = len(self.web_resources) - self.cache["#TRACKING_URLS_IN_MAIL"]
+        self.cache["#TRACKING_OTHER_URLS_IN_MAIL"] = len(list(filter(lambda x: x.isNonClickTracker(), self.web_resources)))
+        self.cache["#TRACKING_CLICK_URLS_IN_MAIL"] = len(list(filter(lambda x: x.isClickTracker(), self.web_resources)))
+        self.cache["#NON_TRACKING_URLS_IN_MAIL"] = len(self.web_resources) - self.cache["#TRACKING_OTHER_URLS_IN_MAIL"] - self.cache["#TRACKING_CLICK_URLS_IN_MAIL"]
 
         from_desc, to_desc, cc_desc, bcc_desc = self.describe_from_to_cc()
         self.cache["TO"] = str(to_desc)

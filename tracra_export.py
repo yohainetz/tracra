@@ -68,7 +68,8 @@ MAIL_CONFIG = ["FOLDER",
                "SENDER_LENGTH",
                "SENDERDOMAIN_LENGTH",
                "YEAR",
-               "#TRACKING_URLS_IN_MAIL",
+               "#TRACKING_CLICK_URLS_IN_MAIL",
+               "#TRACKING_OTHER_URLS_IN_MAIL",
                "#NON_TRACKING_URLS_IN_MAIL",
                "MAILINGLIST_PARAMETER",
                "PERSONAL_SALUTATION",
@@ -201,7 +202,10 @@ def writeMails(analyzed_mails_arr, destname, folderpath, rawdata=False):
     destpath = os.path.join(folderpath,dest_filename)
     wb.save(destpath)
 
-def write_plaintext_tracking(data, destname, folderpath):
+def write_plaintext_tracking(dataHash, destname, folderpath):
+
+    data = [[sender,senderHash["CLICK"],senderHash["OTHER"]] for sender, senderHash in dataHash.items()]
+
     sorted_data = sorted(data, key=lambda d: d[0].split("@")[-1])
 
     wb = Workbook()
@@ -209,7 +213,7 @@ def write_plaintext_tracking(data, destname, folderpath):
     ws_tracking = wb.active
     ws_tracking.title = "Tracking Senders"
 
-    ws_tracking.append(["Absendeadresse","Anzahl verdächtiger Emails"])
+    ws_tracking.append(["Absendeadresse","Anzahl verdächtiger Emails (Klick)","Anzahl verdächtiger Emails (Andere)"])
 
     for row in sorted_data:
         ws_tracking.append(row)

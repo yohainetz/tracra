@@ -24,7 +24,7 @@ class MailboxTest(unittest.TestCase):
         tracra_export.writeMails(self.mailbox.analyzed_mails, XLSX_TEST_FILENAME, Path.cwd(),True)
 
         tracking_sender_data = self.mailbox.tracking_senders
-        tracra_export.write_plaintext_tracking(list(map(list, tracking_sender_data.items())), XLSX_TEST_FILENAME+"tracking_senders",Path.cwd())
+        tracra_export.write_plaintext_tracking(tracking_sender_data, XLSX_TEST_FILENAME+"likely_tracking_",Path.cwd())
 
     def mail_test(self):
         pass

@@ -56,6 +56,8 @@ class NLPUtils:
             return None, None
 
     def text_known(self, text, mailid):
+        if text.strip() == "":
+            return None
         m = hashlib.md5()
         m.update(text.encode("utf8"))
         digest = m.hexdigest()

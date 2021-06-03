@@ -10,3 +10,4 @@ tracra*.zip
 /target/
 *.pyc
 /src/main/python/tests
+*.spec

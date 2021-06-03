@@ -148,8 +148,10 @@ class ResourceAnalyzeObject:
     def blockedBy(self):
         return BlocklistHelper().checkUrl(self.url)
 
-    def isTracker(self):
+    def isNonClickTracker(self):
         if self.url.startswith("mailto:"):
+            return False
+        if self.html is None or self.html.name == "a":
             return False
         blocked_signals = ["Easylist", "EasylistGermany", "disconnect.me-FingerprintingGeneral", "disconnect.me-FingerprintingInvasive"]
         for signal in blocked_signals:
@@ -157,6 +159,15 @@ class ResourceAnalyzeObject:
                 return True
         if self.html and self.isTrackingPixel() is True:
             return True
+
+    def isClickTracker(self):
+        if self.html is not None:
+            if self.html.name != "a":
+                return False
+        blocked_signals = ["Easylist", "EasylistGermany", "disconnect.me-FingerprintingGeneral", "disconnect.me-FingerprintingInvasive"]
+        for signal in blocked_signals:
+            if signal in self.blockedBy():
+                return True
 
     def isTrackingPixel(self):
         if self.html.name == "img":
