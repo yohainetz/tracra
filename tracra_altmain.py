@@ -21,7 +21,7 @@ class StudyApp:
         self.mailbox.fetchMails(self.password, self.imap)
 
         self.mailbox.analyzeMails()
-        writeMails(self.mailbox.analyzed_mails, "output", False)
+        writeMails(self.mailbox.analyzed_mails, "output", False, meta_infos=self.mailbox.additional_meta_infos)
 
     def login_form(self):
         questions = [

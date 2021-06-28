@@ -412,30 +412,36 @@ class MailAnalyzeObject:
         return None
 
     def html_count_tags(self):
-        if self.html:
-            count = defaultdict(int)
-            parser = etree.HTMLParser()
-            root = etree.fromstring(self.html, parser=parser)
-            for ele in root.iter():
-                count[ele.tag] += 1
-            return dict(count)
-        else:
-            return None
+        try:
+            if self.html:
+                count = defaultdict(int)
+                parser = etree.HTMLParser()
+                root = etree.fromstring(self.html, parser=parser)
+                for ele in root.iter():
+                    count[ele.tag] += 1
+                return dict(count)
+            else:
+                return None
+        except Exception as e:
+            return "parsing error"
 
 
 def mime_structure_new(msg_object):
-    arr = []
-    if isinstance(msg_object, str):
-        return (msg_object)
-    else:
-        arr.append((msg_object.get_content_type(), msg_object.get_content_charset(), len(msg_object)))
-    payload = msg_object.get_payload()
-    if not isinstance(payload, str):
+    try:
+        arr = []
+        if isinstance(msg_object, str):
+            return (msg_object)
+        else:
+            arr.append((msg_object.get_content_type(), msg_object.get_content_charset(), len(msg_object)))
+        payload = msg_object.get_payload()
+        if not isinstance(payload, str):
 
-        for part in payload:
-            part_arr = []
-            part_arr.append((part.get_content_type(), part.get_content_charset(), len(payload)))
-            if part.is_multipart():
-                part_arr.append([mime_structure_new(part)])
-            arr.append(part_arr)
-    return arr
+            for part in payload:
+                part_arr = []
+                part_arr.append((part.get_content_type(), part.get_content_charset(), len(payload)))
+                if part.is_multipart():
+                    part_arr.append([mime_structure_new(part)])
+                arr.append(part_arr)
+        return arr
+    except Exception as e:
+        return ["parsing failed"]

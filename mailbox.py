@@ -32,6 +32,7 @@ class MailboxAnalyzeObject(QThread):
         self.email_aliases = []
         self.link_counter = 0
         self.tracking_senders = defaultdict(lambda: defaultdict(int))
+        self.additional_meta_infos = {"skipped_mails": 0}
 
     def set_email(self, email):
         self.email = email.lower()
@@ -218,12 +219,18 @@ class MailboxAnalyzeObject(QThread):
         print("Analyze...")
         self._pbar_init_signal.emit("Analysiere","E-Mails", len(self.analyzed_mails))
         for mail in tqdm(self.analyzed_mails, unit=" E-Mails"):
-            self._pbar_val_update_signal.emit(1)
-            mail.process()
-            if mail.cache["#TRACKING_CLICK_URLS_IN_MAIL"] > 0:
-                self.tracking_senders[mail.from_]["CLICK"] += 1
-            if mail.cache["#TRACKING_OTHER_URLS_IN_MAIL"] > 0:
-                self.tracking_senders[mail.from_]["OTHER"] += 1
+            try:
+                self._pbar_val_update_signal.emit(1)
+                mail.process()
+                if mail.cache["#TRACKING_CLICK_URLS_IN_MAIL"] > 0:
+                    self.tracking_senders[mail.from_]["CLICK"] += 1
+                if mail.cache["#TRACKING_OTHER_URLS_IN_MAIL"] > 0:
+                    self.tracking_senders[mail.from_]["OTHER"] += 1
+            except Exception as e:
+                self.additional_meta_infos["skipped_mails"] += 1
+                print(e)
+                print(mail.subject)
+
 
     def run(self):
         self.fetchMails(self.password, self.imap_server)

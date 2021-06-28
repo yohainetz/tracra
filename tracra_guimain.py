@@ -93,7 +93,7 @@ class TracraMain(QWidget):
         datestr = now.strftime("%m-%d_%H-%M")
         self.pbar_label.setText("Schreibe Dateien")
         folderpath = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select Folder for Output')
-        tracra_export.writeMails(self.mailbox.analyzed_mails, "output_"+datestr, folderpath,False)
+        tracra_export.writeMails(self.mailbox.analyzed_mails, "output_"+datestr, folderpath,False, meta_infos=self.mailbox.additional_meta_infos)
         tracking_sender_data = self.mailbox.tracking_senders
         tracra_export.write_plaintext_tracking(tracking_sender_data, "likely_tracking_"+datestr, folderpath)
         self.pbar_label.setText("Dateien geschrieben nach: " + folderpath)

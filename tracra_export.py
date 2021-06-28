@@ -145,7 +145,7 @@ def field_is_not_empty(field):
 def fill_empty_with_na(row):
     return list(map(lambda f: f if field_is_not_empty(f) else "N/A", row))
 
-def writeMails(analyzed_mails_arr, destname, folderpath, rawdata=False):
+def writeMails(analyzed_mails_arr, destname, folderpath, rawdata=False, meta_infos={}):
     wb = Workbook()
     dest_filename = destname + '.xlsx'
     raw_dest_filename = "KLARTEXT_TRACKING_" + dest_filename
@@ -153,6 +153,7 @@ def writeMails(analyzed_mails_arr, destname, folderpath, rawdata=False):
     ws_mails.title = "Mails #1"
 
     ws_resources = wb.create_sheet('Resources #1')
+    ws_meta = wb.create_sheet('Meta Informationen')
     print("Write to disk...")
 
     mail_count = 1
@@ -198,6 +199,14 @@ def writeMails(analyzed_mails_arr, destname, folderpath, rawdata=False):
             except Exception as e:
                 logging.debug(str(resource_row))
                 logging.debug(e)
+
+    # meta infos
+    for key in meta_infos:
+        try:
+            value = meta_infos[key]
+            ws_meta.append([key, value])
+        except Exception as e:
+            print(e)
 
     destpath = os.path.join(folderpath,dest_filename)
     wb.save(destpath)
