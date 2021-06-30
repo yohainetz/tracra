@@ -32,10 +32,10 @@ w8VAI0Xswlpzh1byKSdbr5Xj
 
 Install PyInstaller `python -m pip install PyInstaller`
 
-`pyinstaller --name="Tracra" --windowed --hidden-import cmath --additional-hooks-dir=. --clean tracra_guimain.py`
+`pyinstaller --name="Tracra" --windowed --hidden-import cmath --additional-hooks-dir=. --clean --noconfirm tracra_guimain.py`
 
 ### build on windows 
 
 Download wheel for `pycld2` from `https://www.lfd.uci.edu/~gohlke/pythonlibs/#pycld2` and install using `pip install pycld****.whl`
 
-`pyinstaller --name="Tracra" --onefile --windowed --hidden-import cmath --additional-hooks-dir=. --clean tracra_guimain.py`
+`pyinstaller --name="Tracra" --onefile --windowed --hidden-import cmath --additional-hooks-dir=. --clean --noconfirm tracra_guimain.py`
