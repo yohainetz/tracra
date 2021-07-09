@@ -100,9 +100,13 @@ class MailboxAnalyzeObject(QThread):
 
     def add_mail(self, msg, foldername):
         mail_id = "mail_" + str(self.mailcounter)
-        self.mailcounter += 1
-        mo = MailAnalyzeObject(msg, foldername, self, mail_id)
-        self.analyzed_mails.append(mo)
+        try:
+            self.mailcounter += 1
+            mo = MailAnalyzeObject(msg, foldername, self, mail_id)
+            self.analyzed_mails.append(mo)
+        except Exception as e:
+            self.additional_meta_infos["skipped_mails"] += 1
+            pass
 
     def add_mails(self, msg_list, foldername):
         for msg in msg_list:
