@@ -151,7 +151,7 @@ class MailboxAnalyzeObject(QThread):
             try:
                 folderstatus = mailbox.folder.set(foldername)
             except Exception as e:
-                pass
+                print("error. try to set folder with quotation marks")
             if folderstatus is None:
                 try:
                     folderstatus = mailbox.folder.set('"' + foldername + '"')
@@ -169,30 +169,30 @@ class MailboxAnalyzeObject(QThread):
             print("Fetch folder", foldername, "...")
             folder_count += 1
             success_on_folder = False
-            if try_reverse:
-                try:
-                    limit = LIMIT_PER_FOLDER
-                    tmp_msg_list = []
-                    date_check = False
-                    self._pbar_init_signal.emit("Hole E-Mails aus " + foldername + "...", "E-Mails", LIMIT_PER_FOLDER)
-                    for msg in tqdm(mailbox.fetch(AND(all=True), reverse=True), unit=" E-Mails"):
-                        if (not date_check) and (msg.date.year < 2019):
+
+            try:
+                limit = LIMIT_PER_FOLDER
+                tmp_msg_list = []
+                date_check = False
+                self._pbar_init_signal.emit("Hole E-Mails aus " + foldername + "...", "E-Mails", LIMIT_PER_FOLDER)
+                for msg in tqdm(mailbox.fetch(AND(all=True), reverse=True), unit=" E-Mails"):
+                    if (not date_check) and (msg.date.year < 2019):
+                        break
+                    date_check = True
+                    tmp_msg_list.append(msg)
+                    limit -= 1
+                    self._pbar_val_update_signal.emit(1)
+                    if limit <= 0:
                             break
-                        date_check = True
-                        tmp_msg_list.append(msg)
-                        limit -= 1
-                        self._pbar_val_update_signal.emit(1)
-                        if limit <= 0:
-                                break
-                    self.add_mails(tmp_msg_list,print_foldername)
+                self.add_mails(tmp_msg_list,print_foldername)
+                success_on_folder = True
+            except Exception as e:
+                print(e)
+                if len(tmp_msg_list) > 50 or len(tmp_msg_list) > LIMIT_PER_FOLDER - 10:
                     success_on_folder = True
-                except Exception as e:
-                    print(e)
-                    if len(tmp_msg_list) > 50 or len(tmp_msg_list) > LIMIT_PER_FOLDER - 10:
-                        success_on_folder = True
-                        self.add_mails(tmp_msg_list, print_foldername)
-                    else:
-                        print("Error on folder. Try again non-reverse", foldername)
+                    self.add_mails(tmp_msg_list, print_foldername)
+                else:
+                    print("Error on folder. Try again non-reverse", foldername)
             if not success_on_folder:
                 try:
                     limit = LIMIT_PER_FOLDER
@@ -205,12 +205,15 @@ class MailboxAnalyzeObject(QThread):
                         date_check = True
                         tmp_msg_list.append(msg)
                         limit -= 1
-                        self._pbar_val_update_signal(1)
+                        self._pbar_val_update_signal.emit(1)
                         if limit <= 0:
                                 break
                     self.add_mails(tmp_msg_list,print_foldername)
-                except:
-                    print("Error on folder", foldername)
+                except Exception as e:
+                    print(e)
+                    print("Error on folder (non reverse mode)", foldername)
+                    if len(tmp_msg_list) > 0:
+                        self.add_mails(tmp_msg_list, print_foldername)
 
         return True
 
