@@ -129,7 +129,7 @@ class MailboxAnalyzeObject(QThread):
 
     def fetchMails(self, password, imap_server):
         print("Retrieving...")
-        LIMIT_PER_FOLDER = 75
+        LIMIT_PER_FOLDER = 85
         try_reverse = True
         mailbox = None
 

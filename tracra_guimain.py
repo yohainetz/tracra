@@ -1,6 +1,7 @@
 from __future__ import print_function, unicode_literals
 
 from datetime import datetime
+from pathlib import Path
 
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QThread
@@ -92,7 +93,16 @@ class TracraMain(QWidget):
         now = datetime.now()
         datestr = now.strftime("%m-%d_%H-%M")
         self.pbar_label.setText("Schreibe Dateien")
-        folderpath = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select Folder for Output')
+        ret = QMessageBox.question(self, "Fertig",
+                                   "Fertig! Wähle nun einen Ort zum Speichern der Ausgabedateien.",
+                                   QMessageBox.Ok)
+
+        defaultpath = None
+        try:
+            defaultpath = str(Path.home())
+        except Exception as e:
+            pass
+        folderpath = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select Folder for Output', defaultpath)
         tracra_export.writeMails(self.mailbox.analyzed_mails, "output_"+datestr, folderpath,False, meta_infos=self.mailbox.additional_meta_infos)
         tracking_sender_data = self.mailbox.tracking_senders
         tracra_export.write_plaintext_tracking(tracking_sender_data, "likely_tracking_"+datestr, folderpath)
