@@ -32,7 +32,7 @@ class MailboxAnalyzeObject(QThread):
         self.email_aliases = []
         self.link_counter = 0
         self.tracking_senders = defaultdict(lambda: defaultdict(int))
-        self.additional_meta_infos = {"skipped_mails": 0}
+        self.additional_meta_infos = {"skipped_mails": 0, "skipped_folder": 0, "aborted_folder": 0}
 
     def set_email(self, email):
         self.email = email.lower()
@@ -191,6 +191,7 @@ class MailboxAnalyzeObject(QThread):
                 if len(tmp_msg_list) > 50 or len(tmp_msg_list) > LIMIT_PER_FOLDER - 10:
                     success_on_folder = True
                     self.add_mails(tmp_msg_list, print_foldername)
+                    self.additional_meta_infos["aborted_folder"] += 1
                 else:
                     print("Error on folder. Try again non-reverse", foldername)
             if not success_on_folder:
@@ -214,6 +215,7 @@ class MailboxAnalyzeObject(QThread):
                     print("Error on folder (non reverse mode)", foldername)
                     if len(tmp_msg_list) > 0:
                         self.add_mails(tmp_msg_list, print_foldername)
+                        self.additional_meta_infos["aborted_folder"] += 1
 
         return True
 
