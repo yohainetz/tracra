@@ -238,5 +238,9 @@ def write_debug_logging(folderpath, str):
     now = datetime.now()
     datestr = now.strftime("%y-%m-%d_%H-%M")
 
-    with open(path,"a") as file:
-        file.write("[" + datestr + "] "+str+"\n")
+    try:
+        with open(path, "a", encoding="utf-8") as file:
+            file.write("[" + datestr + "] "+str+"\n")
+    except Exception as e:
+        print(e)
+        pass
