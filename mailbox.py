@@ -1,6 +1,8 @@
 from threading import Thread
 
 from imap_tools import MailBox, AND, MailMessageFlags
+
+import tracra_export
 from mailanalyzeobject import MailAnalyzeObject
 import xml.etree.ElementTree as ET
 import urllib.request
@@ -11,6 +13,7 @@ import logging
 from domainhelper import DomainHelper
 from PyQt5.QtCore import QThread, pyqtSignal, QObject
 
+LIMIT_PER_FOLDER = 85
 
 class MailboxAnalyzeObject(QThread):
     _pbar_val_signal = pyqtSignal(int)
@@ -33,6 +36,10 @@ class MailboxAnalyzeObject(QThread):
         self.link_counter = 0
         self.tracking_senders = defaultdict(lambda: defaultdict(int))
         self.additional_meta_infos = {"skipped_mails": 0, "skipped_folder": 0, "aborted_folder": 0}
+        self.running = False
+
+        self.debug_logging = False
+        self.debug_logging_folderpath = None
 
     def set_email(self, email):
         self.email = email.lower()
@@ -129,7 +136,6 @@ class MailboxAnalyzeObject(QThread):
 
     def fetchMails(self, password, imap_server):
         print("Retrieving...")
-        LIMIT_PER_FOLDER = 85
         try_reverse = True
         mailbox = None
 
@@ -179,6 +185,8 @@ class MailboxAnalyzeObject(QThread):
                     if (not date_check) and (msg.date.year < 2019):
                         break
                     date_check = True
+                    if(self.debug_logging):
+                        tracra_export.write_debug_logging(self.debug_logging_folderpath, "FETCH " + msg.subject)
                     tmp_msg_list.append(msg)
                     limit -= 1
                     self._pbar_val_update_signal.emit(1)
@@ -204,6 +212,8 @@ class MailboxAnalyzeObject(QThread):
                         if (not date_check) and (msg.date.year < 2019):
                             break
                         date_check = True
+                        if (self.debug_logging):
+                            tracra_export.write_debug_logging(self.debug_logging_folderpath, "FETCH "+ msg.subject)
                         tmp_msg_list.append(msg)
                         limit -= 1
                         self._pbar_val_update_signal.emit(1)
@@ -228,6 +238,9 @@ class MailboxAnalyzeObject(QThread):
         print("Analyze...")
         self._pbar_init_signal.emit("Analysiere","E-Mails", len(self.analyzed_mails))
         for mail in tqdm(self.analyzed_mails, unit=" E-Mails"):
+            if self.debug_logging:
+                tracra_export.write_debug_logging(self.debug_logging_folderpath, "ANALYZE " + mail.subject)
+
             try:
                 self._pbar_val_update_signal.emit(1)
                 mail.process()
@@ -245,6 +258,7 @@ class MailboxAnalyzeObject(QThread):
         self.fetchMails(self.password, self.imap_server)
         self.analyzeMails()
         self._pbar_finished_signal.emit()
+        self.running = True
 
     def autodiscover(self, url, type="imap"):
         #print("Autodiscover Try via " + url)
@@ -280,3 +294,9 @@ class MailboxAnalyzeObject(QThread):
         elif real_foldername in ["bulk"]:
             foldername += "_bulk"
         return foldername
+
+    def enable_debug_logging_to_file(self,folderpath):
+        if self.running:
+            raise Exception("Mailbox is running")
+        self.debug_logging = True
+        self.debug_logging_folderpath = folderpath

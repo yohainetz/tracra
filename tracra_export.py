@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from openpyxl import Workbook
 from openpyxl.styles import Color, Fill, PatternFill
 from openpyxl.cell import Cell
@@ -228,3 +230,13 @@ def write_plaintext_tracking(dataHash, destname, folderpath):
         ws_tracking.append(row)
 
     wb.save(os.path.join(folderpath,dest_filename))
+
+def write_debug_logging(folderpath, str):
+    filename = "tracra_debug_log.txt"
+    path = os.path.join(folderpath,filename)
+
+    now = datetime.now()
+    datestr = now.strftime("%y-%m-%d_%H-%M")
+
+    with open(path,"a") as file:
+        file.write("[" + datestr + "] "+str+"\n")

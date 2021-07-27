@@ -18,10 +18,11 @@ from utils_resource import ResourceManager
 from whois_worker import WhoisWorker
 
 
-class TracraMain(QWidget):
+class TracraMain(QMainWindow):
 
     def __init__(self):
         super().__init__()
+        self.setCentralWidget(QWidget(self))
         self.setWindowTitle("Email Tracking Studie 2021")
         self.mailbox = MailboxAnalyzeObject()
         self.email = None
@@ -29,6 +30,10 @@ class TracraMain(QWidget):
         self.password = None
         self.email_aliases_set = set()
         self.name_aliases_set = set()
+
+        # menu bar
+        self._createMenuBar()
+
         self.main_layout = QVBoxLayout()
         self.main_layout.addWidget(QLabel("Hinweis: Vor- und Nachname werden benötigt um herauszufinden, ob eine E-Mail eine persönliche Ansprache enthält."))
         self.form_layout = QFormLayout()
@@ -45,9 +50,39 @@ class TracraMain(QWidget):
         self.forward_button.setDefault(True)
         self.main_layout.addWidget(self.forward_button)
 
-        self.setLayout(self.main_layout)
+
+        #self.setLayout(self.main_layout)
+        self.centralWidget().setLayout(self.main_layout)
 
         self.forward_button.clicked.connect(self.process_login_form)
+
+    def _createMenuBar(self):
+        menuBar = self.menuBar()
+        fileMenu = QMenu("&File", self)
+
+        self.activateLoggingAction = QAction("&Logging", self)
+        self.activateLoggingAction.triggered.connect(self.activateLogging)
+        self.openAction = QAction("&Open...", self)
+        self.saveAction = QAction("&Save", self)
+        self.exitAction = QAction("&Exit", self)
+
+        fileMenu.addAction(self.activateLoggingAction)
+        menuBar.addMenu(fileMenu)
+
+
+    def activateLogging(self):
+        defaultpath = None
+        try:
+            defaultpath = str(Path.home())
+        except Exception as e:
+            pass
+        folderpath = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select Folder for Logging', defaultpath)
+        try:
+            self.mailbox.enable_debug_logging_to_file(folderpath)
+        except Exception as e:
+            QMessageBox.warning(self, "Fehler",
+                                 "Fehler. Muss vor dem Start aktiviert werden.",
+                                 QMessageBox.Ok)
 
     def fetchMailsAndWriteToDisk(self):
         self.forward_button.setDisabled(True)
