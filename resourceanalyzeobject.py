@@ -170,12 +170,21 @@ class ResourceAnalyzeObject:
                 return True
 
     def isTrackingPixel(self):
+        stylestr = self.html.get("style") or ""
+        stylestr = stylestr.lower()
         if self.html.name == "img":
             if (self.html.get("width") == "1") and (self.html.get("height") == "1"):
-                if len(self.params()) > 0:
-                    return True
-                else:
-                    return "1x1px"
+                return "1x1px"
+            elif (self.html.get("width") == "0") and (self.html.get("height") == "0"):
+                return "0x0px"
+            elif (self.html.get("width") == "0") and (self.html.get("height") == "1"):
+                return "0x1px"
+            elif (self.html.get("width") == "1") and (self.html.get("height") == "0"):
+                return "1x0px"
+            elif self.html.get("hidden"):
+                return "hidden"
+            elif ("display: none" in stylestr) or ("display:none" in stylestr):
+                return "displaynone"
         return None
 
     def evaluateLinkDisplayText(self):
